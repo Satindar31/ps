@@ -4,13 +4,13 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 export default async function Home() {
-  const res = await fetch("http://localhost:3000/api/getDetails", {
+  const res = await fetch(process.env.BASE_URL + "/api/getDetails", {
     cache: "no-store",
   });
   const data = await res.json();
   console.log(data);
   return (
-    <div className="dark bg-[#00030c] min-h-screen">
+    <div className="dark bg-[#00030c] min-h-screen text-white">
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="flex gap-8 flex-row">
           <p>Placeholder image here</p>

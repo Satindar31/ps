@@ -41,6 +41,7 @@ export async function GET(req: Request) {
     const socialsResult: Array<{ platform: string; url: string }> = [];
     let name = "";
     let rname = "";
+    let location = "";
 
     for (const social of socialsKeys) {
       console.time("fetching social detail");
@@ -53,7 +54,7 @@ export async function GET(req: Request) {
       );
       console.timeEnd("fetching social detail");
       console.log(socialDetail?.values);
-      console.time("fetching name and rei");
+      console.time("fetching name and rei and location");
       const _name = await client.kv.namespaces.bulkGet(
         process.env.CF_NAMESPACE_ID!,
         {
@@ -71,7 +72,16 @@ export async function GET(req: Request) {
       );
       rname = _rname?.values?.nativeLangName?.toString() ?? "";
 
-      console.timeEnd("fetching name and rei");
+      const _location = await client.kv.namespaces.bulkGet(
+        process.env.CF_NAMESPACE_ID!,
+        {
+          account_id: process.env.CF_ACCOUNT_ID!,
+          keys: [`location`],
+        }
+      );
+      location = _location?.values?.location?.toString() ?? "";
+
+      console.timeEnd("fetching name and rei and location");
 
       // Attempt to parse the returned value into a platform/url shape.
       let platform = social;
@@ -106,7 +116,7 @@ export async function GET(req: Request) {
     const result = {
       name,
       nativeLangName: rname,
-      location: "Greater Noida, IN",
+      location,
       socials: socialsResult,
     };
 
