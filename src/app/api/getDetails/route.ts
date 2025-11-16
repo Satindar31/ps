@@ -85,7 +85,7 @@ export async function GET(req: Request) {
       });
     }
 
-    console.time("fetching name and rei and location");
+    console.time("fetching name, region, nativeLangName, pfp and location");
     const _name = await client.kv.namespaces.bulkGet(
       process.env.CF_NAMESPACE_ID!,
       {
