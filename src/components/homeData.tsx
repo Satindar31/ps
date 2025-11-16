@@ -16,6 +16,11 @@ import {
   FaDev,
   FaRss,
   FaYoutube,
+  FaStackOverflow,
+  FaReddit,
+  FaXTwitter,
+  FaDribbble,
+  FaInstagram,
 } from "react-icons/fa6";
 
 const loadingStates = [
@@ -87,48 +92,70 @@ export default function HomePage() {
         return <FaRss />;
       case "youtube":
         return <FaYoutube />;
+      case "stackoverflow":
+        return <FaStackOverflow />;
+      case "reddit":
+        return <FaReddit />;
+      case "x":
+        return <FaXTwitter />;
+      case "dribbble":
+        return <FaDribbble />;
+      case "instagram":
+        return <FaInstagram />;
       default:
         return platform;
     }
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <div className="flex gap-8 flex-row">
-        <p>Placeholder image here</p>
-        <div className="flex flex-col">
-          <h1 className="text-2xl">{data.name}</h1>
-          <h3>{data.nativeLangName}</h3>
-          <h4 className="text-sm">{data.location}</h4>
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8">
+      <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-4xl">
+        <div className="shrink-0">
+          <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-500">
+            <span className="text-sm">Avatar</span>
+          </div>
+        </div>
+
+        <div className="flex-1 text-center md:text-left">
+          <h1 className="text-3xl font-semibold">{data.name}</h1>
+          <h3 className="text-lg text-muted-foreground mt-1">{data.nativeLangName}</h3>
+          <h4 className="text-sm text-muted-foreground mt-1">{data.location}</h4>
         </div>
       </div>
-      {data.socials && data.socials.length > 0 && (
-        <div
-          className="grid gap-4 mt-8"
-          style={{
-            gridTemplateColumns: `repeat(${Math.min(
-              4,
-              data.socials.length || 1
-            )}, minmax(0, 1fr))`,
-          }}
-        >
-          {data.socials.map((social: any) => (
-            <Link
-              key={social.platform}
-              href={social.url}
-              target="_blank"
-              className="w-fit"
-            >
-              <Button
-                className="hover:cursor-pointer border-0 w-fit"
-                variant="outline"
+
+      {data.socials && data.socials.length > 0 && (() => {
+        const count = data.socials.length;
+        const columns = Math.min(4, Math.max(1, Math.ceil(Math.sqrt(count))));
+        return (
+          <div
+            className="w-full max-w-4xl mt-8"
+            style={{
+              display: "grid",
+              gap: "0.75rem",
+              gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+            }}
+          >
+            {data.socials.map((social: any) => (
+              <Link
+                key={social.platform + social.url}
+                href={social.url}
+                target="_blank"
+                rel="noopener"
+                className="w-full"
+                aria-label={social.platform}
               >
-                {platformToIcon(social.platform)}
-              </Button>
-            </Link>
-          ))}
-        </div>
-      )}
+                <Button
+                  className="w-full h-14 flex items-center justify-start gap-3 px-4 border"
+                  variant="outline"
+                >
+                  <span className="text-xl">{platformToIcon(social.platform)}</span>
+                  <span className="truncate text-sm">{social.platform}</span>
+                </Button>
+              </Link>
+            ))}
+          </div>
+        );
+      })()}
     </div>
   );
 }
