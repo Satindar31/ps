@@ -21,7 +21,19 @@ export default function AdminForm() {
     fetch("/api/getDetails")
       .then((r) => r.json())
       .then((json) => {
-        if (mounted) setData(json);
+        console.log("fetched pfp:", json.pfp);
+        if (mounted) {
+          setData({
+            location: json.location,
+            name: json.name,
+            nativeLangName: json.nativeLangName,
+            pfp: json.pfp.toString(),
+          });
+
+          console.log("finally");
+          console.log(data?.pfp ?? "no pfp");
+          console.log(data?.location ?? "no location");
+        }
       })
       .catch(() => {
         if (mounted) setData(null);
