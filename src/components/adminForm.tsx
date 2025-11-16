@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { FileUpload } from "./ui/file-upload";
 import { SocialProfilesEdit } from "./socials";
+import { LoaderThree } from "./ui/loader";
 
 export default function AdminForm() {
   const [data, setData] = useState<{
@@ -33,7 +34,12 @@ export default function AdminForm() {
     };
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center">
+        <LoaderThree />
+      </div>
+    );
   if (!data) return <div>Failed to load</div>;
 
   function handleSubmit(e: React.FormEvent) {
