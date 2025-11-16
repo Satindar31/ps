@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { FileUpload } from "./ui/file-upload";
 
 export default function AdminForm() {
   const [data, setData] = useState<{
     name?: string;
     nativeLangName?: string;
     location?: string;
+    pfp?: string;
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -42,6 +44,22 @@ export default function AdminForm() {
     });
   }
 
+  const handleFileUpload = (files: File[]) => {
+    // Convert file to base64 string
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+      console.log(base64String);
+      setData({
+        pfp: base64String?.toString(),
+        name: data.name,
+        location: data.location,
+        nativeLangName: data.nativeLangName,
+      });
+    };
+    reader.readAsDataURL(files[0]);
+  };
+
   return (
     <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
       <Input
@@ -74,6 +92,11 @@ export default function AdminForm() {
           })
         }
       />
+
+      <div className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg">
+        <FileUpload onChange={handleFileUpload} />
+      </div>
+
       <Button type="submit">Submit</Button>
     </form>
   );

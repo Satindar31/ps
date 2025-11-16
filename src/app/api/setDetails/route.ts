@@ -4,7 +4,7 @@ export async function POST(req: Request) {
   const client = new Cloudflare({
     apiToken: process.env.CF_API_TOKEN,
   });
-  const { name, nativeLangName, location } = await req.json();
+  const { name, nativeLangName, location, pfp } = await req.json();
 
   try {
     await client.kv.namespaces.bulkUpdate(
@@ -23,6 +23,10 @@ export async function POST(req: Request) {
           {
             key: "location",
             value: location,
+          },
+          {
+            key: "pfp",
+            value: pfp,
           },
         ],
       }

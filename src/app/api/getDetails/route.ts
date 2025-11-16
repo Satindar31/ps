@@ -54,34 +54,6 @@ export async function GET(req: Request) {
       );
       console.timeEnd("fetching social detail");
       console.log(socialDetail?.values);
-      console.time("fetching name and rei and location");
-      const _name = await client.kv.namespaces.bulkGet(
-        process.env.CF_NAMESPACE_ID!,
-        {
-          account_id: process.env.CF_ACCOUNT_ID!,
-          keys: [`name`],
-        }
-      );
-      name = _name?.values?.name?.toString() ?? "";
-      const _rname = await client.kv.namespaces.bulkGet(
-        process.env.CF_NAMESPACE_ID!,
-        {
-          account_id: process.env.CF_ACCOUNT_ID!,
-          keys: [`nativeLangName`],
-        }
-      );
-      rname = _rname?.values?.nativeLangName?.toString() ?? "";
-
-      const _location = await client.kv.namespaces.bulkGet(
-        process.env.CF_NAMESPACE_ID!,
-        {
-          account_id: process.env.CF_ACCOUNT_ID!,
-          keys: [`location`],
-        }
-      );
-      location = _location?.values?.location?.toString() ?? "";
-
-      console.timeEnd("fetching name and rei and location");
 
       // Attempt to parse the returned value into a platform/url shape.
       let platform = social;
@@ -113,10 +85,49 @@ export async function GET(req: Request) {
       });
     }
 
+    console.time("fetching name and rei and location");
+    const _name = await client.kv.namespaces.bulkGet(
+      process.env.CF_NAMESPACE_ID!,
+      {
+        account_id: process.env.CF_ACCOUNT_ID!,
+        keys: [`name`],
+      }
+    );
+    name = _name?.values?.name?.toString() ?? "";
+    const _rname = await client.kv.namespaces.bulkGet(
+      process.env.CF_NAMESPACE_ID!,
+      {
+        account_id: process.env.CF_ACCOUNT_ID!,
+        keys: [`nativeLangName`],
+      }
+    );
+    rname = _rname?.values?.nativeLangName?.toString() ?? "";
+
+    const _location = await client.kv.namespaces.bulkGet(
+      process.env.CF_NAMESPACE_ID!,
+      {
+        account_id: process.env.CF_ACCOUNT_ID!,
+        keys: [`location`],
+      }
+    );
+    location = _location?.values?.location?.toString() ?? "";
+
+    const _pfp = await client.kv.namespaces.bulkGet(
+      process.env.CF_NAMESPACE_ID!,
+      {
+        account_id: process.env.CF_ACCOUNT_ID!,
+        keys: [`pfp`],
+      }
+    );
+    const pfp = _pfp?.values?.pfp?.toString() ?? "";
+
+    console.timeEnd("fetching name, region, nativeLangName, pfp and location");
+
     const result = {
       name,
       nativeLangName: rname,
       location,
+      pfp,
       socials: socialsResult,
     };
 
