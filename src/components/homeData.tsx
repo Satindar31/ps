@@ -5,6 +5,19 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { MultiStepLoader as Loader } from "@/components/ui/multi-step-loader";
 
+import {
+  FaGithub,
+  FaLinkedin,
+  FaDiscord,
+  FaSpotify,
+  FaBlog,
+  FaHashnode,
+  FaMedium,
+  FaDev,
+  FaRss,
+  FaYoutube,
+} from "react-icons/fa6";
+
 const loadingStates = [
   { text: "Initializing quantum cache coherency" },
   { text: "Re-indexing neural packet buffers" },
@@ -52,6 +65,33 @@ export default function HomePage() {
     );
   if (!data) return <div>Failed to load</div>;
 
+  function platformToIcon(platform: string) {
+    switch (platform.toLowerCase()) {
+      case "github":
+        return <FaGithub />;
+      case "linkedin":
+        return <FaLinkedin />;
+      case "discord":
+        return <FaDiscord />;
+      case "spotify":
+        return <FaSpotify />;
+      case "blog":
+        return <FaBlog />;
+      case "hashnode":
+        return <FaHashnode />;
+      case "medium":
+        return <FaMedium />;
+      case "dev":
+        return <FaDev />;
+      case "rss":
+        return <FaRss />;
+      case "youtube":
+        return <FaYoutube />;
+      default:
+        return platform;
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="flex gap-8 flex-row">
@@ -62,18 +102,33 @@ export default function HomePage() {
           <h4 className="text-sm">{data.location}</h4>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4 mt-8">
-        {data.socials?.map((social: any) => (
-          <Link key={social.platform} href={social.url} target="_blank">
-            <Button
-              className="hover:cursor-pointer rounded-full"
-              variant="outline"
+      {data.socials && data.socials.length > 0 && (
+        <div
+          className="grid gap-4 mt-8"
+          style={{
+            gridTemplateColumns: `repeat(${Math.min(
+              4,
+              data.socials.length || 1
+            )}, minmax(0, 1fr))`,
+          }}
+        >
+          {data.socials.map((social: any) => (
+            <Link
+              key={social.platform}
+              href={social.url}
+              target="_blank"
+              className="w-fit"
             >
-              {social.platform}
-            </Button>
-          </Link>
-        ))}
-      </div>
+              <Button
+                className="hover:cursor-pointer border-0 w-fit"
+                variant="outline"
+              >
+                {platformToIcon(social.platform)}
+              </Button>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
