@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { FileUpload } from "./ui/file-upload";
+import { SocialProfilesEdit } from "./socials";
 
 export default function AdminForm() {
   const [data, setData] = useState<{
@@ -96,6 +97,8 @@ export default function AdminForm() {
       <div className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg">
         <FileUpload onChange={handleFileUpload} />
       </div>
+
+      <SocialProfilesEdit />
 
       <Button type="submit">Submit</Button>
     </form>
