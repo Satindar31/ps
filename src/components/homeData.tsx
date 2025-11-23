@@ -24,6 +24,7 @@ import {
   FaDribbble,
   FaInstagram,
 } from "react-icons/fa6";
+import { MdOutlineEmail } from "react-icons/md";
 import { EncryptedText } from "./ui/encrypted-text";
 import { PixelatedCanvas } from "./ui/pixelated-canvas";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -124,6 +125,8 @@ export default function HomePage() {
         return <FaDribbble />;
       case "instagram":
         return <FaInstagram />;
+      case "email":
+        return <MdOutlineEmail />;
       default:
         return platform;
     }
