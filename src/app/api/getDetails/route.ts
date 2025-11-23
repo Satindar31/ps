@@ -1,5 +1,6 @@
 import Cloudflare from "cloudflare";
 
+
 export async function GET(req: Request) {
   const client = new Cloudflare({
     apiToken: process.env.CF_API_TOKEN,
@@ -123,11 +124,23 @@ export async function GET(req: Request) {
 
     console.timeEnd("fetching name, region, nativeLangName, pfp and location");
 
+    console.time("fetching about");
+    const _about = await client.kv.namespaces.bulkGet(
+      process.env.CF_NAMESPACE_ID!,
+      {
+        account_id: process.env.CF_ACCOUNT_ID!,
+        keys: [`about`],
+      }
+    );
+    let about = _about?.values?.about?.toString() ?? "";
+    console.timeEnd("fetching about");
+
     const result = {
       name,
       nativeLangName: rname,
       location,
       pfp,
+      about,
       socials: socialsResult,
     };
 

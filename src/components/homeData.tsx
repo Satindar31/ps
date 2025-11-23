@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { MultiStepLoader as Loader } from "@/components/ui/multi-step-loader";
+import { remark } from "remark";
+import html from "remark-html";
 
 import {
   FaGithub,
@@ -24,6 +26,7 @@ import {
 } from "react-icons/fa6";
 import { EncryptedText } from "./ui/encrypted-text";
 import { PixelatedCanvas } from "./ui/pixelated-canvas";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 const loadingStates = [
   { text: "Initializing quantum cache coherency" },
@@ -42,6 +45,7 @@ export default function HomePage() {
     nativeLangName?: string;
     location?: string;
     pfp?: string;
+    about: string | TrustedHTML;
     socials?: { platform: string; url: string }[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +55,22 @@ export default function HomePage() {
     fetch("/api/getDetails")
       .then((r) => r.json())
       .then((json) => {
-        if (mounted) setData(json);
+        if (mounted) {
+          remark()
+            .use(html)
+            .process(json.about)
+            .then((processedContent) => {
+              const aboutContentHtml = processedContent.value;
+              setData({
+                location: json.location,
+                name: json.name,
+                nativeLangName: json.nativeLangName,
+                pfp: json.pfp.toString(),
+                about: aboutContentHtml,
+                socials: json.socials,
+              });
+            });
+        }
         return;
       })
       .catch(() => {
@@ -111,94 +130,109 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8">
-      <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-4xl">
-        <div className="shrink-0">
-          <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-500">
-            <PixelatedCanvas
-              src={data.pfp! || "/vercel.svg"}
-              width={128}
-              height={128}
-              cellSize={4}
-              dotScale={0.9}
-              shape="square"
-              backgroundColor="#000000"
-              dropoutStrength={0.4}
-              interactive
-              distortionStrength={3}
-              distortionRadius={80}
-              distortionMode="repel"
-              followSpeed={0.2}
-              jitterStrength={4}
-              jitterSpeed={4}
-              sampleAverage
-              tintColor="#FFFFFF"
-              tintStrength={0.2}
-              className="rounded-xl border border-neutral-800 shadow-lg"
-            />
+    <Sheet>
+      <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8">
+        <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-4xl">
+          <div className="shrink-0">
+            <div className="w-32 h-32 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-500">
+              <PixelatedCanvas
+                src={data.pfp! || "/vercel.svg"}
+                width={128}
+                height={128}
+                cellSize={4}
+                dotScale={0.9}
+                shape="square"
+                backgroundColor="#000000"
+                dropoutStrength={0.4}
+                interactive
+                distortionStrength={3}
+                distortionRadius={80}
+                distortionMode="repel"
+                followSpeed={0.2}
+                jitterStrength={4}
+                jitterSpeed={4}
+                sampleAverage
+                tintColor="#FFFFFF"
+                tintStrength={0.2}
+                className="rounded-xl border border-neutral-800 shadow-lg"
+              />
+            </div>
+          </div>
+
+          <div className="flex-1 text-center md:text-left">
+            <SheetTrigger>
+              <h1 className="text-3xl font-semibold hover:cursor-pointer">
+                <EncryptedText
+                  text={data.name!}
+                  encryptedClassName="text-neutral-500"
+                  revealedClassName="text-3xl font-semibold"
+                  revealDelayMs={57}
+                />
+              </h1>
+            </SheetTrigger>
+            <h3 className="text-lg text-muted-foreground mt-1">
+              {data.nativeLangName}
+            </h3>
+            <h4 className="text-sm text-muted-foreground mt-1">
+              <EncryptedText
+                text={data.location!}
+                encryptedClassName="text-neutral-500"
+                revealedClassName="text-sm"
+                revealDelayMs={57}
+              />
+            </h4>
           </div>
         </div>
 
-        <div className="flex-1 text-center md:text-left">
-          <h1 className="text-3xl font-semibold">
-            <EncryptedText
-              text={data.name!}
-              encryptedClassName="text-neutral-500"
-              revealedClassName="text-3xl font-semibold"
-              revealDelayMs={57}
-            />
-          </h1>
-          <h3 className="text-lg text-muted-foreground mt-1">
-            {data.nativeLangName}
-          </h3>
-          <h4 className="text-sm text-muted-foreground mt-1">
-            <EncryptedText
-              text={data.location!}
-              encryptedClassName="text-neutral-500"
-              revealedClassName="text-sm"
-              revealDelayMs={57}
-            />
-          </h4>
-        </div>
-      </div>
-
-      {data.socials &&
-        data.socials.length > 0 &&
-        (() => {
-          const count = data.socials.length;
-          const columns = Math.min(4, Math.max(1, Math.ceil(Math.sqrt(count))));
-          return (
-            <div
-              className="w-full max-w-4xl mt-8"
-              style={{
-                display: "grid",
-                gap: "0.75rem",
-                gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-              }}
-            >
-              {data.socials.map((social: any) => (
-                <Link
-                  key={social.platform + social.url}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener"
-                  className="w-full"
-                  aria-label={social.platform}
-                >
-                  <Button
-                    className="w-full h-14 flex items-center justify-start gap-3 px-4 border"
-                    variant="outline"
+        {data.socials &&
+          data.socials.length > 0 &&
+          (() => {
+            const count = data.socials.length;
+            const columns = Math.min(
+              4,
+              Math.max(1, Math.ceil(Math.sqrt(count)))
+            );
+            return (
+              <div
+                className="w-full max-w-4xl mt-8"
+                style={{
+                  display: "grid",
+                  gap: "0.75rem",
+                  gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+                }}
+              >
+                {data.socials.map((social: any) => (
+                  <Link
+                    key={social.platform + social.url}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener"
+                    className="w-full"
+                    aria-label={social.platform}
                   >
-                    <span className="text-xl">
-                      {platformToIcon(social.platform)}
-                    </span>
-                    <span className="truncate text-sm">{social.platform}</span>
-                  </Button>
-                </Link>
-              ))}
-            </div>
-          );
-        })()}
-    </div>
+                    <Button
+                      className="w-full h-14 flex items-center justify-start gap-3 px-4 border"
+                      variant="outline"
+                    >
+                      <span className="text-xl">
+                        {platformToIcon(social.platform)}
+                      </span>
+                      <span className="truncate text-sm">
+                        {social.platform}
+                      </span>
+                    </Button>
+                  </Link>
+                ))}
+              </div>
+            );
+          })()}
+        <SheetContent className="bg-[#02002027] border-[#1b1b1b] text-[#ddd] p-8">
+          <div
+            className="prose lg:prose-xl"
+            dangerouslySetInnerHTML={{ __html: data.about }}
+          />
+        </SheetContent>
+      </div>
+    </Sheet>
   );
 }

@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { FileUpload } from "./ui/file-upload";
 import { SocialProfilesEdit } from "./socials";
 import { LoaderThree } from "./ui/loader";
+import { Textarea } from "./ui/textarea";
 
 export default function AdminForm() {
   const [data, setData] = useState<{
@@ -13,6 +14,7 @@ export default function AdminForm() {
     nativeLangName?: string;
     location?: string;
     pfp?: string;
+    about?: string;
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +30,7 @@ export default function AdminForm() {
             name: json.name,
             nativeLangName: json.nativeLangName,
             pfp: json.pfp.toString(),
+            about: json.about,
           });
 
           console.log("finally");
@@ -110,6 +113,20 @@ export default function AdminForm() {
             nativeLangName: data.nativeLangName,
           })
         }
+      />
+
+      <Textarea
+        value={data.about}
+        onChange={(e) =>
+          setData({
+            name: data.name,
+            location: data.location,
+            nativeLangName: data.nativeLangName,
+            pfp: data.pfp,
+            about: e.target.value,
+          })
+        }
+        placeholder="About me section in Markdown"
       />
 
       <div className="w-full max-w-4xl mx-auto min-h-96 border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-lg">
